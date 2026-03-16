@@ -19,19 +19,21 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// add blog
-Route::post('blog/addblog',[BlogController::class, 'store']);
+// CRUD of blogs
+Route::group(['prefix'=>"blog"], function () {
+    // add blog
+    Route::post('addblog', [BlogController::class, 'store']);
 
-// update blog
-Route::post('blog/update/{id}',[BlogController::class,'update']);
+    // update blog
+    Route::post('update/{id}', [BlogController::class, 'update']);
 
-// get all blogs
-Route::get('blog/allblogs',[BlogController::class, 'index']);
+    // get all blogs
+    Route::get('allblogs', [BlogController::class, 'index']);
 
-// delete blog
-Route::delete('blog/delete/{id}',[BlogController::class,'destroy']);
+    // delete blog
+    Route::delete('delete/{id}', [BlogController::class, 'destroy']);
 
-// get specific blog
-Route::get('blog/specificblog/{id}',[BlogController::class,'show']);
+    // get specific blog
+    Route::get('specificblog/{id}', [BlogController::class, 'show']);
 
-
+});

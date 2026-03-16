@@ -7,6 +7,7 @@ use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Validator;
+use function Laravel\Prompts\error;
 
 class BlogController extends Controller
 {
@@ -15,10 +16,7 @@ class BlogController extends Controller
      */
     public function index()
     {
-        // $all = Blog::getAllBlogs();
-
-        // get blogs
-        $blogs = Blog::all();
+        $blogs = Blog::getAllBlog();
         // send response
         return response()->json([
             "success" => true,
@@ -40,39 +38,27 @@ class BlogController extends Controller
      */
     public function store(Request $request)
     {
-        // check existence
-        $blogExist = Blog::where('title', $request->title)->first();
-        if ($blogExist) {
-            return response()->json([
-                "message" => "blog already exist",
-                "success" => false
-            ], status: 409);
-        }
         // validation
-        $validated = $request->validate([
+        $validated = Validator::make($request->all(), [
             "title" => "required|string",
-            "description" => 'required|string',
+            "description" => "required|string",
             "image" => "image"
         ]);
-        // upload image
-        if (request()->hasFile('image')) {
-            $image = request()->file('image');
-            $image->storeAs('images/blogs', $image->getClientOriginalName(), 'public');
-            $image_name = $image->getClientOriginalName();
+        // dd($request);
+        if($validated->fails()){
+            return response()->json([
+                "message"=> $validated->errors(),
+                "success" => false,
+                "status" => 400
+            ]);
         }
-        // save in db
-        $blog = Blog::create([
-            'title' => $request->title,
-            'description' => $request->description,
-            'image' => $image_name
-        ]);
+        $blog = Blog::createBlog($request);
         // send response
         return response()->json([
             "message" => "blog create successfully",
             "success" => true,
             "data" => $blog
         ], status: 200);
-
     }
 
     /**
@@ -80,8 +66,7 @@ class BlogController extends Controller
      */
     public function show($id)
     {
-        //get specific blog
-        $specificBlog = Blog::where("id", $id)->first();
+        $specificBlog = Blog::specificBlog($id);
         // send response
         return response()->json([
             "status" => 200,
@@ -103,52 +88,39 @@ class BlogController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // check existence
-        $blogExist = Blog::find($id);
-        if (!$blogExist) {
-            return response()->json([
-                "message" => "blog not found",
-                "status" => 404,
-                "success" => false
-            ]);
-        };
-        // update blog
-        $blogExist->title = $request->title ?? $blogExist->title;
-        $blogExist->description = $request->description ?? $blogExist->description;
-        // update image
-        if ($request->hasFile("image")) {
-            if ($blogExist->image && Storage::disk('public')->exists('images/blogs/' . $blogExist->image)) {
-                Storage::disk('public')->delete('images/blogs/' . $blogExist->image);
-            }
-
-            $image = request()->file('image');
-            $image->storeAs('images/blogs', $image->getClientOriginalName(), 'public');
-            $blogExist->image = $image->getClientOriginalName();
-        }
-        // validate
-        $validated = $request->validate([
-            "title"=> "required|string",
-            "description"=> 'required|string',
+         // validation
+        $validated = Validator::make($request->all(), [
+            "title" => "required|string",
+            "description" => "required|string",
             "image" => "image"
-         ]);
-        // save in db
-        $blogExist->save();
+        ]);
+       
+        if($validated->fails()){
+            return response()->json([
+                "message"=> $validated->errors(),
+                "success" => false,
+                "status" => 400
+            ]);
+        }
+        $blog = Blog::updateBlog($request->all(), $id);
         // send response
+        // dd($blog);
         return response()->json([
             "message" => "blog update successfully",
             "status" => 200,
             "success" => true,
-            "data" => $blogExist
+            "data" => $blog
         ]);
+    
     }
+
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
-        // delete
-        Blog::findOrFail($id)->delete();
+        Blog::deleteBlog($id);
         // send response
         return response()->json([
             "message" => "blog delete successfully",
