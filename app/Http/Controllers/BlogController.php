@@ -45,16 +45,16 @@ class BlogController extends Controller
             "description" => "required|string",
             "image" => "image"
         ]);
-        if($validated->fails()){
+        if ($validated->fails()) {
             return response()->json([
-                "message"=> $validated->errors(),
+                "message" => $validated->errors(),
                 "success" => false,
                 "status" => 400
             ]);
         }
         $blog = Blog::createBlog($request);
         // send response
-        return redirect('blog/insert')->with('success','create Blog successfully');
+        return redirect('blog/insert')->with('success', 'create Blog successfully');
         return response()->json([
             "message" => "blog create successfully",
             "success" => true,
@@ -90,32 +90,29 @@ class BlogController extends Controller
      */
     public function update(Request $request, $id)
     {
-         // validation
+        // validation
         $validated = Validator::make($request->all(), [
             "title" => "required|string",
             "description" => "required|string",
             "image" => "image"
         ]);
-    //    dd(request('description'), request()->all());
-        if($validated->fails()){
+        if ($validated->fails()) {
             return response()->json([
-                "message"=> $validated->errors(),
+                "message" => $validated->errors(),
                 "success" => false,
                 "status" => 400
             ]);
         }
-        
-        $blog = Blog::updateBlog($request->all(), $id);
+        $blog = Blog::updateBlog($request, $id);
+
         // send response
-        // return redirect('blog/edit'.$id)->with('success','update blog successfully');
-        // return redirect()->route('blog.update',['id' => $id])->with('success','update blog successfully');
         return response()->json([
             "message" => "update blog successfully",
             "status" => 200,
             "success" => true,
             "data" => $blog
         ]);
-    
+
     }
 
 
@@ -126,11 +123,10 @@ class BlogController extends Controller
     {
         Blog::deleteBlog($id);
         // send response
-        // return response()->json([
-        //     "message" => "delete blog successfully",
-        //     "status" => 200,
-        //     "success" => true
-        // ]);
-        return redirect()->route('blog.index');
+        return response()->json([
+            "message" => "delete blog successfully",
+            "status" => 200,
+            "success" => true
+        ]);
     }
 }
