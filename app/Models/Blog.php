@@ -20,17 +20,13 @@ class Blog extends Model
     // create blog
     public static function createBlog($request)
     {
-        // $validated = $request->validate([
-        //     "title" => "required|string",
-        //     "description" => 'required|string',
-        //     "image" => "image"
-        // ]);
         // upload image
         if (request()->hasFile('image')) {
             $image = request()->file('image');
             $image->storeAs('images/blogs', $image->getClientOriginalName(), 'public');
             $image_name = $image->getClientOriginalName();
         }
+        // dd(request($image_name), request()->all());
         // save in db
         $blog = Blog::create([
             'title' => $request->title,
@@ -54,12 +50,12 @@ class Blog extends Model
                 "success" => false
             ]);
         }
-    
+
         // update blog
-        $blogExist->title       = $request->title ?? $blogExist->title;
+        $blogExist->title = $request->title ?? $blogExist->title;
         $blogExist->description = $request->description ?? $blogExist->description;
         // update image
-        if ($request['image']) {
+        if ($request['image'] ?? null) {
             if ($blogExist->image && Storage::disk('public')->exists('images/blogs/' . $blogExist->image)) {
                 Storage::disk('public')->delete('images/blogs/' . $blogExist->image);
             }
@@ -68,7 +64,7 @@ class Blog extends Model
             $blogExist->image = $image->getClientOriginalName();
         }
         // save in db
-        $updatedBlog = $blogExist->save();
+        $blogExist->save();
         // send response
         return $blogExist;
     }

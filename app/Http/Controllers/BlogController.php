@@ -18,10 +18,11 @@ class BlogController extends Controller
     {
         $blogs = Blog::getAllBlog();
         // send response
-        return response()->json([
-            "success" => true,
-            "data" => $blogs
-        ]);
+        // return response()->json([
+        //     "success" => true,
+        //     "data" => $blogs
+        // ]);
+        return view('blog.index', compact('blogs'));
     }
 
     /**
@@ -44,7 +45,6 @@ class BlogController extends Controller
             "description" => "required|string",
             "image" => "image"
         ]);
-        // dd($request);
         if($validated->fails()){
             return response()->json([
                 "message"=> $validated->errors(),
@@ -54,6 +54,7 @@ class BlogController extends Controller
         }
         $blog = Blog::createBlog($request);
         // send response
+        return redirect('blog/insert')->with('success','create Blog successfully');
         return response()->json([
             "message" => "blog create successfully",
             "success" => true,
@@ -78,9 +79,10 @@ class BlogController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit($id)
     {
-        //
+        $blog = Blog::findOrFail($id);
+        return view('blog.update', compact('blog'));
     }
 
     /**
@@ -94,7 +96,7 @@ class BlogController extends Controller
             "description" => "required|string",
             "image" => "image"
         ]);
-       
+    //    dd(request('description'), request()->all());
         if($validated->fails()){
             return response()->json([
                 "message"=> $validated->errors(),
@@ -102,11 +104,13 @@ class BlogController extends Controller
                 "status" => 400
             ]);
         }
+        
         $blog = Blog::updateBlog($request->all(), $id);
         // send response
-        // dd($blog);
+        // return redirect('blog/edit'.$id)->with('success','update blog successfully');
+        // return redirect()->route('blog.update',['id' => $id])->with('success','update blog successfully');
         return response()->json([
-            "message" => "blog update successfully",
+            "message" => "update blog successfully",
             "status" => 200,
             "success" => true,
             "data" => $blog
@@ -118,14 +122,15 @@ class BlogController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
         Blog::deleteBlog($id);
         // send response
-        return response()->json([
-            "message" => "blog delete successfully",
-            "status" => 200,
-            "success" => true
-        ]);
+        // return response()->json([
+        //     "message" => "delete blog successfully",
+        //     "status" => 200,
+        //     "success" => true
+        // ]);
+        return redirect()->route('blog.index');
     }
 }

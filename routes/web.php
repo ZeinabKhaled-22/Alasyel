@@ -19,13 +19,15 @@ Route::get('/', function () {
 });
 
 // add blog
-Route::post('blog/insert',[BlogController::class, 'store'])->name('blog.insert');
+Route::get('blog/insert', [BlogController::class, 'create']);
+Route::post('blog/create',[BlogController::class, 'store'])->name('blog.create');
 
 // get blog
 Route::get('blog/index',[BlogController::class, 'index']);
 
 // update blog
-Route::put('blog/update/{id}',[BlogController::class,'update']);
+Route::get('blog/edit/{id}',[BlogController::class,'edit']);
+Route::put('blog/update/{id}',[BlogController::class,'update'])->name('blog.update');
 
 // delete blog
-Route::delete('blog/delete/{id}',[BlogController::class,'destroy']);
+Route::post('blog/delete/{id}',[BlogController::class,'destroy'])->name('blog.destroy');
