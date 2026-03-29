@@ -19,20 +19,18 @@ Route::get('/', function () {
 });
 
 // CRUD blogs
-Route::group(['perfix' => 'blog'], function () {
     // add blog
-    Route::get('insert', [BlogController::class, 'create']);
-    Route::post('create', [BlogController::class, 'store'])->name('blog.create');
+    Route::get('blog/insert', [BlogController::class, 'create']);
+    Route::post('blog/create', [BlogController::class, 'store'])->name('blog.create');
 
     // get blog
-    Route::get('index', [BlogController::class, 'index']);
+    Route::get('blog/index', [BlogController::class, 'index']);
 
     // update blog
-    Route::get('edit/{id}', [BlogController::class, 'edit']);
-    Route::put('update/{id}', [BlogController::class, 'update'])->name('blog.update');
+    Route::get('blog/edit/{id}', [BlogController::class, 'edit']);
+    Route::put('blog/update/{id}', [BlogController::class, 'update'])->name('blog.update');
 
     // delete blog
-    Route::get('delete/{id}', [BlogController::class, 'destroy']);
+    Route::get('blog/delete/{id}', [BlogController::class, 'destroy']);
 
 
-});
