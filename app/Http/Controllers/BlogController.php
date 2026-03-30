@@ -54,7 +54,6 @@ class BlogController extends Controller
         }
         $blog = Blog::createBlog($request);
         // send response
-        return redirect('blog/insert')->with('success', 'create Blog successfully');
         return response()->json([
             "message" => "blog create successfully",
             "success" => true,
@@ -106,12 +105,12 @@ class BlogController extends Controller
         $blog = Blog::updateBlog($request, $id);
 
         // send response
-        return response()->json([
-            "message" => "update blog successfully",
-            "status" => 200,
-            "success" => true,
-            "data" => $blog
-        ]);
+        // return response()->json([
+        //     "message" => "update blog successfully",
+        //     "status" => 200,
+        //     "success" => true,
+        //     "data" => $blog
+        // ]);
 
     }
 
