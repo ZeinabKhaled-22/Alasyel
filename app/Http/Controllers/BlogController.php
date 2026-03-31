@@ -105,12 +105,12 @@ class BlogController extends Controller
         $blog = Blog::updateBlog($request, $id);
 
         // send response
-        // return response()->json([
-        //     "message" => "update blog successfully",
-        //     "status" => 200,
-        //     "success" => true,
-        //     "data" => $blog
-        // ]);
+        return response()->json([
+            "message" => "update blog successfully",
+            "status" => 200,
+            "success" => true,
+            "data" => $blog
+        ]);
 
     }
 
